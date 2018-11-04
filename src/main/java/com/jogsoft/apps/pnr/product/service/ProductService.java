@@ -1,11 +1,12 @@
 package com.jogsoft.apps.pnr.product.service;
 
+import java.util.Optional;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -24,13 +25,18 @@ import com.jogsoft.apps.pnr.product.repository.ProductRepository;
 public class ProductService {
 	
 	/* The size of the sublist to be used in pagination */
-	final int PAGESIZE = 5;
+	public final static int PAGESIZE = 10;
 	
-	@Autowired
-	ProductRepository repository;
 	
-	@Autowired
-	ModelMapper mapper;
+	private final ProductRepository repository;
+	
+	
+	private final ModelMapper mapper;
+	
+	public ProductService(ProductRepository repository, ModelMapper mapper){
+		this.repository = repository;
+		this.mapper = mapper;
+	}
 
 	/**
 	 * Find and return a list of products as specified by their page number, page numbers starts 
@@ -42,7 +48,7 @@ public class ProductService {
 	 * @return a sublist (Page) of Products
 	 */
 	public Page<ProductDto> getProducts(int page) {
-		Page<Product> products = repository.findAll(new PageRequest(page, PAGESIZE));
+		Page<Product> products = repository.findAll(PageRequest.of(page, PAGESIZE));		
 		Page<ProductDto> productDtos = mapper.map(products, new TypeToken<Page<ProductDto>>() {}.getType());
 		return productDtos;
 	}
@@ -55,7 +61,7 @@ public class ProductService {
 	 * @throws ItemNotFoundException if the product is not found 
 	 */
 	public ProductDto getProduct(@NotNull Long productId) throws ItemNotFoundException {
-		Product product = repository.findOne(productId);
+		Optional<Product> product = repository.findById(productId);
 		if(product == null){
 			throw new ItemNotFoundException("Product not found for product Id: " + productId);
 		}
@@ -75,7 +81,7 @@ public class ProductService {
 			return this.getProducts(page);
 		}
 		else{
-			Page<Product> products = repository.findByNameOrCategory(new PageRequest(page, PAGESIZE), keyword);
+			Page<Product> products = repository.findByNameOrCategory(PageRequest.of(page, PAGESIZE), keyword);
 			return mapper.map(products, new TypeToken<Page<ProductDto>>() {}.getType());
 		}
 	}
@@ -111,7 +117,7 @@ public class ProductService {
 		if(productId.longValue() != productDto.getId().longValue()){
 			throw new MisMatchedIdentityException(String.format("productId %s and productDto.id %s do not match", productId, productDto.getId()));
 		}		
-		if(!repository.exists(productId)){
+		if(!repository.existsById(productId)){
 			throw new ItemNotFoundException(String.format("Product not found for product Id: %s", productId));
 		}
 		Product product = mapper.map(productDto, Product.class);

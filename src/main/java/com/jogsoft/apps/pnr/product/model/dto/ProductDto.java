@@ -3,9 +3,10 @@ package com.jogsoft.apps.pnr.product.model.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotEmpty;
+
 
 public class ProductDto implements Serializable {
 

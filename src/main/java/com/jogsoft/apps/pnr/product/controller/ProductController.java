@@ -4,14 +4,14 @@
 package com.jogsoft.apps.pnr.product.controller;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,8 +29,23 @@ import com.jogsoft.apps.pnr.product.service.ProductService;
 @RequestMapping("/products")
 public class ProductController {
 	
-	@Autowired
 	ProductService productService;
+	
+	public ProductController(ProductService productService){
+		this.productService = productService;
+	}
+	
+	@RequestMapping(method= POST)
+	public ProductDto createProduct(@RequestBody ProductDto productDto){
+		return productService.createProduct(productDto);
+	}
+	
+	
+	@RequestMapping(method= GET)
+	public Page<ProductDto> getProducts(@RequestParam(name="page", required=false, defaultValue="0")  int page){		
+		return productService.getProducts(page);		
+	}
+	
 
 	@RequestMapping(value="/{productId}", method= GET)
 	public ProductDto getProduct(@PathVariable Long productId){		
@@ -41,7 +56,7 @@ public class ProductController {
 		}		
 	}
 	
-	@RequestMapping(value="/{productId}", method= RequestMethod.PUT)
+	@RequestMapping(value="/{productId}", method= PUT)
 	public ProductDto updateProduct(@PathVariable Long productId, @RequestBody ProductDto productDto){		
 		try {
 			return productService.updateProduct(productId, productDto);
@@ -52,20 +67,8 @@ public class ProductController {
 		}		
 	}
 	
-	@RequestMapping(method= RequestMethod.POST)
-	public ProductDto createProduct(@RequestBody ProductDto productDto){
-		return productService.createProduct(productDto);
-	}
 	
-	
-	@RequestMapping(method= RequestMethod.GET)
-	public Page<ProductDto> getProducts(@RequestParam(name="page", required=false, defaultValue="0")  int page,
-			@RequestParam(name="keyword", required=false) String keyword){		
-		return productService.getProducts(page);		
-	}
-	
-	
-	@RequestMapping(value="/search/{keyword}", method = RequestMethod.GET)
+	@RequestMapping(value="/search/{keyword}", method = GET)
 	public Page<ProductDto> findProduct(@RequestParam(name="keyword") String keyword, @RequestParam(name="page", required=false, defaultValue="0")  int page){
 		return productService.findProduct(keyword, page);
 	}
