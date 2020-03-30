@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.jogsoft.apps.pnr.product.config;
 
 import java.util.ArrayList;
@@ -27,7 +24,7 @@ import com.jogsoft.apps.pnr.product.exception.ServiceException;
  */
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
-	Logger logger = Logger.getLogger("RestExceptionHandler");
+	private final Logger logger = Logger.getLogger("RestExceptionHandler");
 
 	@ExceptionHandler(Exception.class)
 	ResponseEntity<Object> handleRestException(Exception ex, WebRequest request) {
@@ -35,16 +32,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		logger.log(Level.SEVERE, ex.getMessage(), ex);
 		if (ex instanceof ServiceException) {
 			errorResponse.setStatus(((ServiceException) ex).getHttpStatus());
-			return new ResponseEntity<Object>(errorResponse, ((ServiceException) ex).getHttpStatus());
+			return new ResponseEntity<>(errorResponse, ((ServiceException) ex).getHttpStatus());
 		} else {
-			return new ResponseEntity<Object>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@ExceptionHandler(ConstraintViolationException.class)
 	public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex) {
 		// logger.log(Level.SEVERE, ex.getMessage(), ex);
-		
 		Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
 		
 		List<ErrorResponse> errors = new ArrayList<>(violations.size());
@@ -56,9 +52,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 			errors.add(errorResponse);
 		}
 		
-		
-		
-		return new ResponseEntity<Object>(errors, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
 	}
 
 }

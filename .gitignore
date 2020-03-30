@@ -3,6 +3,7 @@
 /.classpath
 /.project
 /.springBeans
+*.iml
 
 # Windows image file caches
 Thumbs.db

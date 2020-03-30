@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import org.hamcrest.Matchers;
@@ -40,7 +41,7 @@ import com.jogsoft.apps.pnr.product.service.ProductService;
 public class ProductControllerTest {
 
 	protected MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
-			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+			MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8);
 
 	@SuppressWarnings("rawtypes")
 	private HttpMessageConverter mappingJackson2HttpMessageConverter;

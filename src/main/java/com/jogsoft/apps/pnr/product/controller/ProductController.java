@@ -1,12 +1,11 @@
-/**
- * 
- */
 package com.jogsoft.apps.pnr.product.controller;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,15 +21,16 @@ import com.jogsoft.apps.pnr.product.model.dto.ProductDto;
 import com.jogsoft.apps.pnr.product.service.ProductService;
 
 /**
- * Product controller for product microservice
+ * Product controller for products
  * @author Julius Oduro
  */
 @RestController
 @RequestMapping("/products")
 public class ProductController {
 	
-	ProductService productService;
-	
+	private ProductService productService;
+
+	@Autowired
 	public ProductController(ProductService productService){
 		this.productService = productService;
 	}
@@ -68,8 +68,10 @@ public class ProductController {
 	}
 	
 	
-	@RequestMapping(value="/search/{keyword}", method = GET)
-	public Page<ProductDto> findProduct(@RequestParam(name="keyword") String keyword, @RequestParam(name="page", required=false, defaultValue="0")  int page){
-		return productService.findProduct(keyword, page);
+	@RequestMapping(value="/search", method = GET)
+	public Page<ProductDto> findProduct(@ApiParam("keywords, a list of comma separated key and values pairs, example name=book;title=java")
+											@RequestParam(name="keywords") String keywords,
+										@RequestParam(name="page", required=false, defaultValue="0")  int page){
+		return productService.findProducts(keywords, page);
 	}
 }

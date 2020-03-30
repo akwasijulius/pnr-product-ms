@@ -19,8 +19,7 @@ public class Application {
     
     @Bean
     public ModelMapper modelMapper(){
-    	ModelMapper mapper = new ModelMapper();
-    	return mapper;
+        return new ModelMapper();
     }
     
     @Bean
